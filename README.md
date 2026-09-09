@@ -33,8 +33,6 @@ The application supports both left-to-right (LTR) and right-to-left (RTL) layout
 
 ---
 
-## 🛠️ Technologies
-...
 ## ✨ Features
 
 * 🎮 Interactive Tic-Tac-Toe gameplay
