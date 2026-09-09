@@ -212,10 +212,8 @@ You only need:
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/USERNAME/Tic-Tac-Toe-Game-PWA.git
+git clone https://github.com/HedayatiNiaDev/Tic-Tac-Toe-Game-PWA.git
 ```
-
-Replace `USERNAME` with the GitHub account that owns the repository.
 
 ---
 
