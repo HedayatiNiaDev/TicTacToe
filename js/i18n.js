@@ -26,7 +26,8 @@ const translations = {
         statusTwo: "Two Players",
         github: "GitHub",
         notSupport: "Your screen size is not supported",
-        language: "Language"
+        language: "Language",
+        changeLanguage: "Change language"
     },
     fa: {
         brand: "دوز",
@@ -54,7 +55,8 @@ const translations = {
         statusTwo: "دو نفره",
         github: "گیت‌هاب",
         notSupport: "اندازه‌ی صفحه‌نمایش شما پشتیبانی نمی‌شود",
-        language: "زبان"
+        language: "زبان",
+        changeLanguage: "تغییر زبان"
     },
     ar: {
         brand: "إكس أو",
@@ -82,7 +84,8 @@ const translations = {
         statusTwo: "لاعبان",
         github: "جيت‌هاب",
         notSupport: "حجم الشاشة غير مدعوم",
-        language: "اللغة"
+        language: "اللغة",
+        changeLanguage: "تغيير اللغة"
     },
     es: {
         brand: "Tres en Raya",
@@ -110,7 +113,8 @@ const translations = {
         statusTwo: "Dos Jugadores",
         github: "GitHub",
         notSupport: "El tamaño de tu pantalla no es compatible",
-        language: "Idioma"
+        language: "Idioma",
+        changeLanguage: "Cambiar idioma"
     },
     fr: {
         brand: "Morpion",
@@ -138,7 +142,8 @@ const translations = {
         statusTwo: "Deux Joueurs",
         github: "GitHub",
         notSupport: "La taille de votre écran n'est pas prise en charge",
-        language: "Langue"
+        language: "Langue",
+        changeLanguage: "Changer de langue"
     }
 };
 
@@ -193,7 +198,7 @@ function buildLanguageSwitcher() {
     const wrap = document.createElement("div");
     wrap.className = "lang-switcher";
     wrap.innerHTML = `
-        <button id="langToggle" class="lang-toggle" aria-haspopup="true" aria-expanded="false">
+        <button id="langToggle" class="lang-toggle" aria-haspopup="true" aria-expanded="false" data-i18n="change_language" aria-label="Change language">
             <i class="bi bi-translate"></i><span id="langCurrent"></span>
         </button>
         <div id="langMenu" class="lang-menu" role="menu"></div>
@@ -226,9 +231,30 @@ function buildLanguageSwitcher() {
 
 function refreshLangSwitcherUI() {
     const current = document.getElementById("langCurrent");
-    if (current) current.textContent = langMeta[currentLang].name;
+
+    if (current) {
+        current.textContent = langMeta[currentLang].name;
+    }
+
+    const toggle = document.getElementById("langToggle");
+
+    if (toggle) {
+        toggle.setAttribute(
+            "aria-label",
+            t("changeLanguage")
+        );
+
+        toggle.setAttribute(
+            "title",
+            t("changeLanguage")
+        );
+    }
+
     document.querySelectorAll(".lang-option").forEach(el => {
-        el.classList.toggle("active", el.getAttribute("data-lang") === currentLang);
+        el.classList.toggle(
+            "active",
+            el.getAttribute("data-lang") === currentLang
+        );
     });
 }
 
