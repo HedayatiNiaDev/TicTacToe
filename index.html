@@ -1,0 +1,81 @@
+<!-- https://github.com/HedayatiNiaDev/Tic-Tac-Toe-Game -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="description" content="An interactive and responsive Tic-Tac-Toe game built with HTML, CSS, and JavaScript.">
+    <meta name="author" content="Amir Mohammad Hedayati Nia">
+    <title>Tic Tac Toe</title>
+
+    <!-- PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#202124">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tic Tac Toe">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+
+    <link rel="icon" href="favicon.webp">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="notsupport"><p data-i18n="notSupport">Your screen size is not supported</p></div>
+
+    <header class="topbar">
+        <div class="brand"><img class="logo" src="./favicon.webp" alt="Tic-Tac-Toe-Logo"><span data-i18n="brand">Tic Tac Toe</span></div>
+        <a class="github-link" href="https://github.com/HedayatiNiaDev" target="_blank" rel="noopener"><span data-i18n="github">GitHub</span> <i class="bi bi-arrow-up-right"></i></a>
+    </header>
+
+    <main id="container" class="container fade-in">
+        <div class="hero">
+            <h1 data-i18n="heroTitle1">Tic-Tac-Toe</h1>
+            <p data-i18n="heroDesc">Pick a mode, make your move, and enjoy the game.</p>
+        </div>
+
+        <div id="modeSelection">
+            <div class="difficulty-section mode-section">
+                <h2 data-i18n="singlePlayer">Single Player</h2>
+                <div class="difficulty-buttons difficulty-grid">
+                    <button class="btn mode-card" id="easy"><strong data-i18n="easy">Easy</strong><small data-i18n="easyDesc">Relaxed opponent</small></button>
+                    <button class="btn mode-card" id="medium"><strong data-i18n="medium">Medium</strong><small data-i18n="mediumDesc">Smart opponent</small></button>
+                    <button class="btn mode-card" id="impossible"><strong data-i18n="impossible">Impossible</strong><small data-i18n="impossibleDesc">Minimax AI</small></button>
+                </div>
+            </div>
+
+            <div class="multiplayer-section mode-section">
+                <h2 data-i18n="twoPlayersTitle">Two Players</h2>
+                <div class="difficulty-buttons full-width">
+                    <button class="btn friend-button" id="twoPlayers"><span data-i18n="playWithFriend">Play with a friend (Offline)</span></button>
+                </div>
+            </div>
+
+            <button id="switchSymbol" class="btn symbol-button"><span id="symbolIsText">Symbol is X</span> <span id="switchToText">· switch to O</span></button>
+        </div>
+
+        <div id="gameBoard" style="display: none;">
+            <div id="scoreboard" class="scoreboard">
+                <div id="player1Score" class="score" dir="ltr">
+                    <i class="bi bi-person-fill"></i><span contentEditable id="player1Name">Player</span><span id="player1SymbolForDisplay">(X):</span><span id="scoreX">0</span>
+                </div>
+                <span id="equal" class="opacity-0">=</span>
+                <div id="player2Score" class="score" dir="ltr">
+                    <i id="player2-icon" class="bi bi-person-fill"></i><span contentEditable id="player2Name">Player</span><span id="player2SymbolForDisplay">(O):</span><span id="scoreO">0</span>
+                </div>
+            </div>
+
+            <div id="status"></div>
+            <div class="board"></div>
+
+            <button id="reset" class="btn"><i class="bi bi-arrow-repeat"></i> <span data-i18n="resetGame">Reset Game</span></button>
+            <button id="changeMode" class="btn"><i class="bi bi-grid"></i> <span data-i18n="newGame">New Game</span></button>
+        </div>
+    </main>
+
+    <script src="js/i18n.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/pwa.js"></script>
+</body>
+</html>
