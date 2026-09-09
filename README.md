@@ -8,7 +8,7 @@ The application is completely **client-side** and does not require a server-side
 
 ---
 ## 📱 Responsive Design
-...
+
 The goal is to keep the game board, controls, and menus accessible without unnecessary horizontal scrolling.
 
 ---
