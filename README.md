@@ -304,9 +304,6 @@ Online multiplayer may be considered as a future feature.
 
 ## 📸 Screenshots
 
-```md
-## 📸 Screenshots
-
 ### Main Menu
 
 ![Main Menu](screenshots/menu.png)
@@ -318,7 +315,7 @@ Online multiplayer may be considered as a future feature.
 ### Mobile View
 
 ![Mobile View](screenshots/mobile.png)
-```
+
 
 If the project contains screenshots, replace the example paths with the actual screenshot filenames.
 
