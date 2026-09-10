@@ -31,6 +31,11 @@ const gameBoard = document.getElementById('gameBoard');
 const hero = document.querySelector('.hero');
 const symbolIsText = document.getElementById('symbolIsText');
 const switchToText = document.getElementById('switchToText');
+// Cached once instead of re-queried on every status update / win / reset
+const player1ScoreEl = document.getElementById('player1Score');
+const player2ScoreEl = document.getElementById('player2Score');
+const player1SymbolDisplay = document.getElementById('player1SymbolForDisplay');
+const player2SymbolDisplay = document.getElementById('player2SymbolForDisplay');
 
 // Track whether the player has manually renamed a player field,
 // so language switches don't overwrite a custom name.
@@ -69,14 +74,17 @@ function onLanguageChanged() {
 
 updateSymbolButtonText();
 
-// Create game board cells
+// Create game board cells (built once via a DocumentFragment to avoid
+// triggering a reflow on every appendChild call)
 const boardElement = document.querySelector('.board');
+const cellsFragment = document.createDocumentFragment();
 for (let i = 0; i < 9; i++) {
     const cell = document.createElement('div');
     cell.classList.add('cell');
     cell.setAttribute('data-index', i);
-    boardElement.appendChild(cell);
+    cellsFragment.appendChild(cell);
 }
+boardElement.appendChild(cellsFragment);
 const cells = document.querySelectorAll('.cell');
 
 // Create game controls container
@@ -126,7 +134,7 @@ document.getElementById('switchSymbol').addEventListener('click', () => {
     // If player chooses O in single-player mode, computer makes the first move
     if (playerSymbol === 'O' && gameMode === 'single') {
         currentPlayer = 'X'; // Computer starts
-        setTimeout(() => computerMove(), 500);
+        setTimeout(computerMove, 500);
     } else {
         currentPlayer = 'X'; // Player starts
     }
@@ -139,9 +147,11 @@ document.getElementById('switchSymbol').addEventListener('click', () => {
 resetButton.addEventListener('click', resetGame);
 changeModeButton.addEventListener('click', changeMode);
 
-// Add click handlers to all cells
-cells.forEach(cell => {
-    cell.addEventListener('click', () => cellClick(cell));
+// Single delegated listener instead of one per cell — cheaper to set up
+// and automatically covers any cell added/removed later.
+boardElement.addEventListener('click', (event) => {
+    const cell = event.target.closest('.cell');
+    if (cell) cellClick(cell);
 });
 
 // Function to change game mode
@@ -175,7 +185,7 @@ function cellClick(cell) {
     // Handle computer move in single-player mode
     if (gameMode === 'single' && gameActive && currentPlayer === computerSymbol) {
         gameActive = false;
-        setTimeout(() => computerMove(), 500);
+        setTimeout(computerMove, 500);
     }
 }
 
@@ -192,14 +202,21 @@ function changePlayer() {
     updateStatus();
 }
 
+// Clears the highlight classes on both score displays in one place
+// instead of repeating the same two lines in every function that needs it.
+function clearScoreHighlights() {
+    player1ScoreEl.classList.remove('selectPlayerScore', 'winPlayerScore');
+    player2ScoreEl.classList.remove('selectPlayerScore', 'winPlayerScore');
+}
+
 // Function to update game status display
 function updateStatus() {
     if (currentPlayer === playerSymbol) {
-        document.getElementById('player1Score').classList.add('selectPlayerScore');
-        document.getElementById('player2Score').classList.remove('selectPlayerScore');
+        player1ScoreEl.classList.add('selectPlayerScore');
+        player2ScoreEl.classList.remove('selectPlayerScore');
     } else {
-        document.getElementById('player1Score').classList.remove('selectPlayerScore');
-        document.getElementById('player2Score').classList.add('selectPlayerScore');
+        player1ScoreEl.classList.remove('selectPlayerScore');
+        player2ScoreEl.classList.add('selectPlayerScore');
     }
     gameActive = true;
 }
@@ -211,14 +228,13 @@ function checkForWinner() {
         if (board[a] && board[a] === board[b] && board[a] === board[c]) {
             gameActive = false;
             // Remove selection highlights
-            document.getElementById('player1Score').classList.remove('selectPlayerScore');
-            document.getElementById('player2Score').classList.remove('selectPlayerScore');
+            clearScoreHighlights();
 
             // Highlight winner
             if (board[a] === playerSymbol) {
-                document.getElementById('player1Score').classList.add('winPlayerScore');
+                player1ScoreEl.classList.add('winPlayerScore');
             } else if (board[a] === computerSymbol) {
-                document.getElementById('player2Score').classList.add('winPlayerScore');
+                player2ScoreEl.classList.add('winPlayerScore');
             }
 
             // Highlight winning cells
@@ -226,9 +242,7 @@ function checkForWinner() {
             updateScore(board[a]);
 
             // Auto reset after delay
-            setTimeout(() => {
-                resetGame();
-            }, 2005);
+            setTimeout(resetGame, 2005);
 
             return;
         }
@@ -236,16 +250,13 @@ function checkForWinner() {
 
     // Check for draw
     if (!board.includes('')) {
-        document.getElementById('player1Score').classList.remove('selectPlayerScore');
-        document.getElementById('player2Score').classList.remove('selectPlayerScore');
+        clearScoreHighlights();
         equalDisplay.classList.remove('opacity-0');
-        scoreboard.classList.add('selectPlayerScore');
+        scoreBoard.classList.add('selectPlayerScore');
         gameActive = false;
 
         // Auto reset after delay
-        setTimeout(() => {
-            resetGame();
-        }, 1500);
+        setTimeout(resetGame, 1500);
 
         return;
     }
@@ -261,12 +272,10 @@ function highlightWinningCells(combination) {
 }
 
 // Function to update score
-function updateScore(player) {
-    if (player === 'X') {
-        scores[playerSymbol]++;
-    } else {
-        scores[computerSymbol]++;
-    }
+// (fixed: was hardcoded to compare against 'X' instead of the winning
+// symbol itself, which mis-attributed points whenever the player was O)
+function updateScore(winningSymbol) {
+    scores[winningSymbol]++;
     scoreXDisplay.textContent = scores.X;
     scoreODisplay.textContent = scores.O;
 }
@@ -287,17 +296,17 @@ function computerMove() {
         default:
             index = getRandomEmptyCell(); // Random move
     }
-    const cell = document.querySelector(`[data-index="${index}"]`);
+    const cell = cells[index];
     updateCell(cell, index); // Update the cell
     checkForWinner(); // Check for a winner
 }
 
 // Function to get random empty cell
 function getRandomEmptyCell() {
-    const emptyCells = board.reduce((acc, cell, index) => {
-        if (cell === '') acc.push(index);
-        return acc;
-    }, []);
+    const emptyCells = [];
+    for (let i = 0; i < board.length; i++) {
+        if (board[i] === '') emptyCells.push(i);
+    }
     return emptyCells[Math.floor(Math.random() * emptyCells.length)];
 }
 
@@ -306,7 +315,7 @@ function getSmartMove() {
     // Check for a winning move for the computer
     for (let i = 0; i < 9; i++) {
         if (board[i] === '') {
-            board[i] = computerSymbol; // Use computerSymbol instead of 'O'
+            board[i] = computerSymbol;
             if (checkWinner() === computerSymbol) {
                 board[i] = '';
                 return i;
@@ -318,7 +327,7 @@ function getSmartMove() {
     // Block the player's winning move
     for (let i = 0; i < 9; i++) {
         if (board[i] === '') {
-            board[i] = playerSymbol; // Use playerSymbol instead of 'X'
+            board[i] = playerSymbol;
             if (checkWinner() === playerSymbol) {
                 board[i] = '';
                 return i;
@@ -347,14 +356,14 @@ function getSmartMove() {
     return getRandomEmptyCell(); // Fallback to random move
 }
 
-// Function to get best move (Minimax algorithm)
+// Function to get best move (Minimax algorithm with alpha-beta pruning)
 function getBestMove() {
     let bestScore = -Infinity;
     let bestMove;
     for (let i = 0; i < 9; i++) {
         if (board[i] === '') {
-            board[i] = computerSymbol; // Use computerSymbol instead of 'O'
-            let score = minimax(board, 0, false);
+            board[i] = computerSymbol;
+            const score = minimax(board, 0, false, -Infinity, Infinity);
             board[i] = '';
             if (score > bestScore) {
                 bestScore = score;
@@ -365,9 +374,11 @@ function getBestMove() {
     return bestMove;
 }
 
-// Minimax algorithm implementation
-function minimax(board, depth, isMaximizing) {
-    const scores = { [playerSymbol]: -1, [computerSymbol]: 1, tie: 0 }; // Use dynamic symbols
+// Minimax algorithm implementation with alpha-beta pruning.
+// Pruning skips branches that can't influence the final decision, which
+// noticeably cuts down the number of recursive calls on "Impossible" mode.
+function minimax(board, depth, isMaximizing, alpha, beta) {
+    const scores = { [playerSymbol]: -1, [computerSymbol]: 1, tie: 0 };
     const result = checkWinner();
     if (result !== null) return scores[result];
 
@@ -375,10 +386,12 @@ function minimax(board, depth, isMaximizing) {
         let bestScore = -Infinity;
         for (let i = 0; i < 9; i++) {
             if (board[i] === '') {
-                board[i] = computerSymbol; // Use computerSymbol instead of 'O'
-                let score = minimax(board, depth + 1, false);
+                board[i] = computerSymbol;
+                const score = minimax(board, depth + 1, false, alpha, beta);
                 board[i] = '';
                 bestScore = Math.max(score, bestScore);
+                alpha = Math.max(alpha, bestScore);
+                if (beta <= alpha) break; // prune
             }
         }
         return bestScore;
@@ -386,10 +399,12 @@ function minimax(board, depth, isMaximizing) {
         let bestScore = Infinity;
         for (let i = 0; i < 9; i++) {
             if (board[i] === '') {
-                board[i] = playerSymbol; // Use playerSymbol instead of 'X'
-                let score = minimax(board, depth + 1, true);
+                board[i] = playerSymbol;
+                const score = minimax(board, depth + 1, true, alpha, beta);
                 board[i] = '';
                 bestScore = Math.min(score, bestScore);
+                beta = Math.min(beta, bestScore);
+                if (beta <= alpha) break; // prune
             }
         }
         return bestScore;
@@ -408,6 +423,16 @@ function checkWinner() {
     return null; // No winner yet
 }
 
+// Shared reset of per-cell animation/highlight classes, used by both
+// startGame() and resetGame().
+function clearCellAnimations() {
+    cells.forEach(cell => cell.classList.remove('scale-in'));
+    player1ScoreEl.classList.remove('winPlayerScore');
+    player2ScoreEl.classList.remove('winPlayerScore');
+    equalDisplay.classList.add('opacity-0');
+    scoreBoard.classList.remove('selectPlayerScore');
+}
+
 // Function to start game
 function startGame() {
     // Reset custom-name tracking for a fresh game
@@ -424,7 +449,7 @@ function startGame() {
         // If player chooses O, computer makes the first move
         if (playerSymbol === 'O') {
             currentPlayer = 'X'; // Computer starts
-            setTimeout(() => computerMove(), 500);
+            setTimeout(computerMove, 500);
         } else {
             currentPlayer = 'X'; // Player starts
         }
@@ -440,15 +465,9 @@ function startGame() {
     }
 
     // Reset animations and styles
-    document.querySelectorAll('.cell.scale-in').forEach(button => {
-        button.classList.remove('scale-in');
-    });
-    document.getElementById('player1Score').classList.remove('winPlayerScore');
-    document.getElementById('player2Score').classList.remove('winPlayerScore');
-    document.getElementById('player1SymbolForDisplay').textContent="("+playerSymbol+"):";
-    document.getElementById('player2SymbolForDisplay').textContent="("+computerSymbol+"):";
-    equalDisplay.classList.add('opacity-0');
-    scoreboard.classList.remove('selectPlayerScore');
+    clearCellAnimations();
+    player1SymbolDisplay.textContent = `(${playerSymbol}):`;
+    player2SymbolDisplay.textContent = `(${computerSymbol}):`;
 
     // Reset board and start game
     resetBoard();
@@ -471,13 +490,7 @@ function startGame() {
 // Function to reset game
 function resetGame() {
     // Reset animations and styles
-    document.querySelectorAll('.cell.scale-in').forEach(button => {
-        button.classList.remove('scale-in');
-    });
-    document.getElementById('player1Score').classList.remove('winPlayerScore');
-    document.getElementById('player2Score').classList.remove('winPlayerScore');
-    equalDisplay.classList.add('opacity-0');
-    scoreboard.classList.remove('selectPlayerScore');
+    clearCellAnimations();
 
     // Update player and computer symbols
     if (playerSymbol === 'X') {
@@ -485,7 +498,7 @@ function resetGame() {
     } else {
         currentPlayer = 'O'; // Player starts as O
         // If player is O, computer (X) makes the first move
-        setTimeout(() => computerMove(), 500);
+        setTimeout(computerMove, 500);
     }
 
     resetBoard();
