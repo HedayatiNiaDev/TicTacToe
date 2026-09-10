@@ -1,5 +1,5 @@
 // Bump this version any time cached files change to force an update.
-const CACHE_NAME = 'tic-tac-toe-v2.1.2';
+const CACHE_NAME = 'tic-tac-toe-v2.1.3';
 
 // Local app-shell files (same-origin)
 const ASSETS_TO_CACHE = [
@@ -18,9 +18,7 @@ const ASSETS_TO_CACHE = [
 
 // Third-party stylesheets
 const EXTERNAL_STYLESHEETS = [
-    'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css',
-    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap',
-    'https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap'
+    'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap'
 ];
 
 /**

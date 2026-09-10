@@ -18,7 +18,18 @@
     <link rel="apple-touch-icon" href="icons/icon-192.png">
 
     <link rel="icon" href="favicon.webp">
-    <link rel="stylesheet" href="assets/bootstrap-icons/bootstrap-icons.min.css">
+
+    <!-- Fonts: discovered right away by the HTML parser instead of being hidden
+         inside a CSS @import (which can't be found until style.css is fetched). -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Vazirmatn:wght@400;500;600;700;800&display=swap">
+
+    <!-- Icon font: not needed for first paint, so it's loaded without blocking
+         rendering. The noscript fallback keeps it working if JS is disabled. -->
+    <link rel="preload" href="assets/bootstrap-icons/bootstrap-icons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="assets/bootstrap-icons/bootstrap-icons.min.css"></noscript>
+
     <link rel="stylesheet" href="css/style.css">
     <script>
         (function () {
