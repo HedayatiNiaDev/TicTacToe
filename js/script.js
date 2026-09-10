@@ -357,59 +357,138 @@ function getSmartMove() {
 }
 
 // Function to get best move (Minimax algorithm with alpha-beta pruning)
-function getBestMove() {
-    let bestScore = -Infinity;
-    let bestMove;
+// ================================
+// Lightweight Perfect Minimax
+// Bitboard + Alpha-Beta + Memoization
+// ================================
+
+const WIN_MASKS = [
+    0b111000000, 0b000111000, 0b000000111,
+    0b100100100, 0b010010010, 0b001001001,
+    0b100010001, 0b001010100
+];
+
+const minimaxCache = new Map();
+
+function hasWon(bits) {
+    for (const mask of WIN_MASKS) {
+        if ((bits & mask) === mask) return true;
+    }
+    return false;
+}
+
+function getBits(symbol) {
+    let bits = 0;
+
     for (let i = 0; i < 9; i++) {
-        if (board[i] === '') {
-            board[i] = computerSymbol;
-            const score = minimax(board, 0, false, -Infinity, Infinity);
-            board[i] = '';
-            if (score > bestScore) {
-                bestScore = score;
-                bestMove = i;
-            }
+        if (board[i] === symbol) {
+            bits |= (1 << (8 - i));
         }
     }
+
+    return bits;
+}
+
+function getBestMove() {
+    const playerBits = getBits(playerSymbol);
+    const computerBits = getBits(computerSymbol);
+
+    let bestScore = -Infinity;
+    let bestMove = -1;
+
+    for (let i = 0; i < 9; i++) {
+        const bit = 1 << (8 - i);
+
+        if ((playerBits | computerBits) & bit) continue;
+
+        const score = minimax(
+            playerBits,
+            computerBits | bit,
+            false,
+            -Infinity,
+            Infinity
+        );
+
+        if (score > bestScore) {
+            bestScore = score;
+            bestMove = i;
+        }
+    }
+
     return bestMove;
 }
 
 // Minimax algorithm implementation with alpha-beta pruning.
 // Pruning skips branches that can't influence the final decision, which
 // noticeably cuts down the number of recursive calls on "Impossible" mode.
-function minimax(board, depth, isMaximizing, alpha, beta) {
-    const scores = { [playerSymbol]: -1, [computerSymbol]: 1, tie: 0 };
-    const result = checkWinner();
-    if (result !== null) return scores[result];
+function minimax(playerBits, computerBits, isMaximizing, alpha, beta) {
+    // Immediate result
+    if (hasWon(computerBits)) return 10;
+    if (hasWon(playerBits)) return -10;
+
+    const occupied = playerBits | computerBits;
+
+    // Draw
+    if (occupied === 0b111111111) return 0;
+
+    // Cache only exact states.
+    // Alpha-beta cutoffs are not cached because they may be bounds.
+    const key = `${playerBits}|${computerBits}|${isMaximizing}`;
+
+    if (minimaxCache.has(key)) {
+        return minimaxCache.get(key);
+    }
+
+    let bestScore;
 
     if (isMaximizing) {
-        let bestScore = -Infinity;
+        bestScore = -Infinity;
+
         for (let i = 0; i < 9; i++) {
-            if (board[i] === '') {
-                board[i] = computerSymbol;
-                const score = minimax(board, depth + 1, false, alpha, beta);
-                board[i] = '';
-                bestScore = Math.max(score, bestScore);
-                alpha = Math.max(alpha, bestScore);
-                if (beta <= alpha) break; // prune
-            }
+            const bit = 1 << (8 - i);
+
+            if (occupied & bit) continue;
+
+            const score = minimax(
+                playerBits,
+                computerBits | bit,
+                false,
+                alpha,
+                beta
+            );
+
+            bestScore = Math.max(bestScore, score);
+            alpha = Math.max(alpha, bestScore);
+
+            if (beta <= alpha) break;
         }
-        return bestScore;
     } else {
-        let bestScore = Infinity;
+        bestScore = Infinity;
+
         for (let i = 0; i < 9; i++) {
-            if (board[i] === '') {
-                board[i] = playerSymbol;
-                const score = minimax(board, depth + 1, true, alpha, beta);
-                board[i] = '';
-                bestScore = Math.min(score, bestScore);
-                beta = Math.min(beta, bestScore);
-                if (beta <= alpha) break; // prune
-            }
+            const bit = 1 << (8 - i);
+
+            if (occupied & bit) continue;
+
+            const score = minimax(
+                playerBits | bit,
+                computerBits,
+                true,
+                alpha,
+                beta
+            );
+
+            bestScore = Math.min(bestScore, score);
+            beta = Math.min(beta, bestScore);
+
+            if (beta <= alpha) break;
         }
-        return bestScore;
     }
+
+    minimaxCache.set(key, bestScore);
+    return bestScore;
 }
+
 
 // Function to check for a winner (for Minimax)
 function checkWinner() {
@@ -520,7 +599,10 @@ function resetGame() {
 // Function to reset board
 function resetBoard() {
     board.fill('');
+    minimaxCache.clear();
+
     currentPlayer = 'X';
+
     cells.forEach(cell => {
         cell.textContent = '';
         cell.classList.remove('win');
