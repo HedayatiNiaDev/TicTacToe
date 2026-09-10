@@ -259,6 +259,12 @@ function startGame() {
     player1NameCustom = false;
     player2NameCustom = false;
 
+    clearCellAnimations();
+    resetBoard();
+
+    gameActive = true;
+    currentPlayer = 'X';
+
     if (gameMode === 'single') {
         updateStatusText();
 
@@ -270,7 +276,19 @@ function startGame() {
 
         player1SymbolDisplay.textContent = `(${playerSymbol}):`;
         player2SymbolDisplay.textContent = `(${computerSymbol}):`;
-    } else {
+
+        // اگر بازیکن O باشد، کامپیوتر X شروع می‌کند
+        if (playerSymbol === 'O') {
+            currentPlayer = computerSymbol;
+            gameActive = false;
+
+            setTimeout(() => {
+                if (gameMode === 'single') {
+                    computerMove();
+                }
+            }, 500);
+        }
+    } else if (gameMode === 'two') {
         updateStatusText();
 
         player2Icon.classList.remove('bi-robot');
@@ -281,37 +299,24 @@ function startGame() {
 
         player1SymbolDisplay.textContent = '(X):';
         player2SymbolDisplay.textContent = '(O):';
+
+        // در بازی دو نفره، X همیشه شروع می‌کند
+        currentPlayer = 'X';
+        gameActive = true;
     }
 
-    clearCellAnimations();
-    resetBoard();
-
-    gameActive = true;
-
-    currentPlayer = 'X';
-
-    gameBoard.style.display = '';
     modeSelection.style.display = 'none';
     hero.style.display = 'none';
+    gameBoard.style.display = '';
 
     updateStatus();
 
     cells.forEach((cell, index) => {
         setTimeout(() => {
             cell.classList.add('visible');
-        }, index * 70);
+        }, index * 100);
     });
-
-    // If the player selected O, computer starts
-    if (gameMode === 'single' && playerSymbol === 'O') {
-        gameActive = false;
-
-        setTimeout(() => {
-            computerMove();
-        }, 500);
-    }
 }
-
 function resetGame() {
     clearCellAnimations();
     resetBoard();
@@ -389,27 +394,40 @@ function resetBoard() {
 function cellClick(cell) {
     const index = Number(cell.getAttribute('data-index'));
 
+    if (board[index] !== '' || !gameActive) {
+        return;
+    }
+
     if (
-        board[index] !== '' ||
-        !gameActive ||
+        gameMode === 'single' &&
         currentPlayer !== playerSymbol
     ) {
         return;
     }
 
     updateCell(cell, index);
+
     checkForWinner();
+
+    if (!gameActive) {
+        return;
+    }
+
+    if (gameMode === 'two') {
+        return;
+    }
 
     if (
         gameMode === 'single' &&
-        gameActive &&
         currentPlayer === computerSymbol
     ) {
         gameActive = false;
 
         setTimeout(() => {
-            computerMove();
-        }, 350);
+            if (gameMode === 'single' && !getWinner()) {
+                computerMove();
+            }
+        }, 500);
     }
 }
 
@@ -572,6 +590,11 @@ function updateScore(winningSymbol) {
 // =========================================================
 
 function computerMove() {
+    // کامپیوتر نباید در حالت دو نفره حرکت کند
+    if (gameMode !== 'single') {
+        return;
+    }
+
     if (getWinner() !== null) {
         return;
     }
@@ -602,6 +625,7 @@ function computerMove() {
             break;
     }
 
+    // اگر خانه‌ای باقی نمانده، کاری نکن
     if (index === -1 || index === undefined) {
         return;
     }
