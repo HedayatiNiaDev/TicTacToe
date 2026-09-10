@@ -1,213 +1,266 @@
-# 🎮 Tic-Tac-Toe Game — PWA
+# 🎮 Tic Tac Toe (PWA)
 
-A modern, responsive, and installable **Tic-Tac-Toe game** built with **HTML, CSS, and JavaScript** and designed as a **Progressive Web App (PWA)**.
+A modern, responsive, installable **Tic Tac Toe Progressive Web App (PWA)** built with **HTML5, CSS3, and vanilla JavaScript**.
 
-The game provides an interactive and user-friendly experience for playing Tic-Tac-Toe directly in the browser. It supports **Player vs Computer** and **Player vs Player on the same device**, with multiple difficulty levels for the computer opponent.
-
-The application is completely **client-side** and does not require a server-side backend or online multiplayer system.
+The game is fully client-side and supports **Single Player**, **Two Players on the same device**, multiple AI difficulty levels, multilingual UI, automatic dark mode, offline support, PWA installation, and in-app update detection.
 
 ---
-## 📱 Responsive Design
 
-The goal is to keep the game board, controls, and menus accessible without unnecessary horizontal scrolling.
+## ✨ Features
+
+- 🎮 Classic Tic Tac Toe gameplay
+- 🤖 **Single Player** mode against the computer
+- 👥 **Two Players** mode on the same device
+- 🧠 Three AI difficulty levels:
+  - 🟢 **Easy** — relaxed opponent
+  - 🟡 **Medium** — smarter opponent
+  - 🔴 **Impossible** — Minimax-based AI
+- 🔄 Reset the current game or start a new game
+- 🏆 Automatic win detection
+- 🤝 Automatic draw detection
+- 🔤 Choose your symbol (`X` or `O`) in Single Player mode
+- 📊 Live score tracking during the current session
+- ✏️ Editable player names in Two Players mode
+- 🌍 Multilingual interface
+- ↔️ Automatic LTR / RTL layout support
+- 🌙 Automatic dark mode based on the system theme
+- 📱 Responsive desktop, tablet, and mobile UI
+- ⚡ Progressive Web App support
+- 📲 Install directly from supported browsers
+- 📴 Offline gameplay through a Service Worker
+- 🔄 In-app notification when a new version is available
+- ⬆️ Apply PWA updates without manually clearing the browser cache
+- 🎨 Modern minimal interface
+- 🚫 No account required
+- 🚫 No backend required
+- 🚫 No database required
+- 🚫 No online multiplayer required
 
 ---
+
+
+## 📸 Screenshots
+
+### 🖥️ Main Menu
+
+![Tic Tac Toe Main Menu](screenshots/menu.png)
+
+### 🎮 Gameplay
+
+![Tic Tac Toe Gameplay](screenshots/gameplay.png)
+
+### 📱 Mobile
+
+![Tic Tac Toe Mobile](screenshots/mobile.png)
 
 ## 🌍 Supported Languages
 
 | Language | Code | Direction |
-|---|---|---|
+|---|---:|---|
 | 🇬🇧 English | `en` | LTR |
 | 🇮🇷 Persian | `fa` | RTL |
 | 🇸🇦 Arabic | `ar` | RTL |
 | 🇪🇸 Spanish | `es` | LTR |
 | 🇫🇷 French | `fr` | LTR |
 
-The application supports both left-to-right (LTR) and right-to-left (RTL) layouts.
-
-- **English** — LTR
-- **Persian** — RTL
-- **Arabic** — RTL
-- **Spanish** — LTR
-- **French** — LTR
-
----
-
-## ✨ Features
-
-* 🎮 Interactive Tic-Tac-Toe gameplay
-* 🤖 Player vs Computer
-* 🧠 Multiple AI difficulty levels
-* 👥 Player vs Player on the same device
-* 🏆 Automatic win detection
-* 🤝 Draw detection
-* 🔄 Restart / New Game functionality
-* 📱 Responsive design
-* 💻 Desktop and mobile support
-* ⚡ Progressive Web App (PWA)
-* 📲 Installable on supported devices
-* 📴 Offline gameplay
-* 💾 Browser-based functionality
-* 🎨 Modern and responsive user interface
-* 🚫 No server-side backend required
-* 🚫 No user account required
-* 🚫 No online multiplayer
+The interface automatically switches between **LTR** and **RTL** layouts where required.
 
 ---
 
 ## 🎮 Game Modes
 
-The game supports two main gameplay modes.
+### 🤖 Single Player
 
-### 🤖 Player vs Computer
+Play against the computer with three difficulty levels.
 
-Play against a computer-controlled opponent.
+You can also choose whether to play as **X** or **O**. If you choose `O`, the computer starts the game as `X`.
 
-The AI provides multiple difficulty levels to offer different gameplay experiences.
+### 👥 Two Players
 
-Depending on the selected difficulty, the computer can make easier or more challenging decisions.
+Two people can play locally on the same device.
 
-### 👥 Player vs Player
+Player names can be edited directly in the scoreboard, making it easy to personalize a local match.
 
-Two players can play against each other **locally on the same device**.
-
-> This mode does not provide online multiplayer functionality.
+> Online multiplayer is not included.
 
 ---
 
-## 🧠 AI System
+## 🧠 AI
 
-The computer opponent is implemented using **JavaScript game logic**.
+The AI is implemented entirely in JavaScript and does not use any external AI service.
 
-The AI evaluates the available moves and selects a move based on the selected difficulty level.
+### Easy
 
-The AI runs entirely inside the browser.
+Uses a mixture of smart and random moves, making the computer less predictable while keeping the game relaxed.
 
-No external AI service, API, or server is required.
+### Medium
 
-### Difficulty Levels
+Uses smart tactical decisions most of the time, with occasional random moves for a more balanced experience.
 
-The project can provide different difficulty levels such as:
+### Impossible
 
-* 🟢 **Easy** — More relaxed gameplay
-* 🟡 **Medium** — More balanced decision-making
-* 🔴 **Hard** — More challenging gameplay
+Uses the **Minimax algorithm** to calculate the best available move.
 
-The exact AI behavior depends on the current implementation of the project.
+The Impossible difficulty is designed to play optimally and should not be expected to make normal tactical mistakes.
 
 ---
 
-## 🕹️ How to Play
+## 🌙 Automatic Dark Mode
 
-The objective of Tic-Tac-Toe is to place three of your symbols in a row.
+The application automatically follows the operating system or browser's preferred color scheme.
 
-A winning combination can be:
+- ☀️ Light mode is used when the system prefers light mode.
+- 🌙 Dark mode is used when the system prefers dark mode.
+- 🔄 The interface updates automatically when the system theme changes.
 
-* ➡️ Horizontal
-* ⬇️ Vertical
-* ↘️ Diagonal
-
-For example:
-
-```text
-X | X | X
----------
-O | O | X
----------
-O | X | O
-```
-
-In this example, **X wins** because three X symbols are aligned horizontally.
-
-If all cells are filled and neither player has three symbols in a row, the game ends in a **draw**.
-
----
-
-## 📴 Offline Gameplay
-
-The game is designed to work as a client-side application.
-
-The main gameplay logic runs directly in the browser using JavaScript.
-
-The project does not require an internet connection for normal gameplay after the required application resources are available locally or cached by the PWA.
-
-The application does not depend on:
-
-* ❌ Online game servers
-* ❌ Real-time multiplayer servers
-* ❌ User accounts
-* ❌ Databases
-* ❌ External APIs
+No manual theme setting is required.
 
 ---
 
 ## ⚡ Progressive Web App
 
-This project is designed as a **Progressive Web App (PWA)**.
+The project is a fully client-side **Progressive Web App**.
 
-A PWA allows a web application to provide an app-like experience and, where supported, can be installed on a device.
+It includes:
 
-The project uses:
+- `manifest.json`
+- `service-worker.js`
+- Install prompt handling
+- Offline app-shell caching
+- PWA update detection
+- In-app update action
+- App icons
+- Standalone display mode
+- Mobile web-app metadata
 
-* **Web App Manifest**
-* **Service Worker**
-* **Responsive Web Design**
-* **Client-side JavaScript**
+### 📲 Install the App
 
-### 📲 Installing the App
+On a supported browser:
 
-On supported browsers:
+1. Open the deployed game website.
+2. Wait for the browser to recognize the application as installable.
+3. Select **Install** when the install option is available.
+4. Launch Tic Tac Toe as an installed application.
 
-1. Open the game website.
-2. Open the browser menu.
-3. Select **Install App** or **Add to Home Screen**.
-4. Launch the game from the installed application.
+Installation support depends on the browser, operating system, HTTPS deployment, and PWA requirements.
 
-PWA installation capabilities depend on the browser, operating system, and deployment environment.
+---
+
+## 🔄 PWA Updates
+
+The application includes an update mechanism for the Service Worker.
+
+When a newer version is detected:
+
+1. The new Service Worker is installed in the background.
+2. An **Update** button becomes available in the application.
+3. Selecting **Update** activates the new Service Worker.
+4. The application reloads automatically with the new version.
+
+The Service Worker currently uses the cache version:
+
+```text
+tic-tac-toe-v2.1.1
+```
+
+When cached application files change, the cache version should be incremented in `service-worker.js` so existing installations can receive the updated app shell.
+
+---
+
+## 📴 Offline Support
+
+After the application resources have been cached, the game can continue to work without an internet connection.
+
+The Service Worker caches the main application resources, including:
+
+- HTML
+- CSS
+- JavaScript
+- Manifest
+- App icons
+- Favicon
+- Required font/icon resources
+
+Normal gameplay does not require:
+
+- ❌ A game server
+- ❌ A database
+- ❌ An account
+- ❌ An API
+- ❌ An online multiplayer service
 
 ---
 
 ## 📱 Responsive Design
 
-The interface is designed to work across different screen sizes.
+The interface is designed for:
 
-Supported layouts include:
+- 💻 Desktop
+- 🖥️ Large screens
+- 💻 Laptop
+- 📟 Tablet
+- 📱 Mobile devices
 
-* 💻 Desktop
-* 🖥️ Large screens
-* 💻 Laptop
-* 📱 Mobile
-* 📟 Tablet
-
-The goal is to keep the game board, controls, and menus accessible without unnecessary horizontal scrolling.
+The layout is designed to keep the main game experience accessible without unnecessary horizontal scrolling.
 
 ---
 
 ## 🛠️ Technologies
 
-The project is built using standard web technologies.
+| Technology | Purpose |
+|---|---|
+| **HTML5** | Application structure |
+| **CSS3** | UI, responsive layout, themes, and animations |
+| **JavaScript** | Game logic and interaction |
+| **Minimax** | Impossible AI |
+| **PWA** | Installable web application |
+| **Service Worker** | Offline caching and updates |
+| **Web App Manifest** | Installation metadata |
+| **Bootstrap Icons** | Local interface icons |
+| **Inter** | Primary Latin font |
+| **Vazirmatn** | Persian and Arabic typography |
 
-| Technology           | Purpose                               |
-| -------------------- | ------------------------------------- |
-| **HTML5**            | Application structure                 |
-| **CSS3**             | Styling and responsive UI             |
-| **JavaScript**       | Game logic and interaction            |
-| **PWA**              | Installable web application           |
-| **Web App Manifest** | Application metadata and installation |
-| **Service Worker**   | Caching and offline functionality     |
+The project does not require a JavaScript framework.
+
+---
+
+## 📁 Project Structure
+
+```text
+Tic-Tac-Toe-main/
+├── assets/
+│   └── bootstrap-icons/
+├── css/
+│   └── style.css
+├── icons/
+│   ├── icon-192.png
+│   ├── icon-512.png
+│   └── icon-maskable-512.png
+├── js/
+│   ├── i18n.js
+│   ├── pwa.js
+│   ├── script.js
+│   └── theme.js
+├── favicon.webp
+├── index.html
+├── manifest.json
+├── service-worker.js
+├── LICENSE
+└── README.md
+```
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
 
-No special development environment is required.
-
 You only need:
 
-* A modern web browser
-* A local development server for testing PWA functionality
+- A modern web browser
+- A local web server for development and PWA testing
 
----
+No backend or package installation is required.
 
 ### 1. Clone the Repository
 
@@ -215,68 +268,60 @@ You only need:
 git clone https://github.com/HedayatiNiaDev/Tic-Tac-Toe-Game-PWA.git
 ```
 
----
-
 ### 2. Open the Project
-
-Open the project folder in your preferred code editor.
-
-For example:
 
 ```text
 Tic-Tac-Toe-Game-PWA/
 ```
 
----
+Open the project in your preferred code editor.
 
 ### 3. Run a Local Server
 
-For normal HTML/CSS/JavaScript development, you can use a local development server.
+For example, with **Visual Studio Code**, you can use the **Live Server** extension.
 
-If you are using **Visual Studio Code**, you can use the **Live Server** extension.
+A local HTTP server is recommended instead of opening `index.html` directly with `file://`, especially when testing:
 
-> Using a local server is recommended when testing PWA features such as the Service Worker.
-
----
+- Service Worker
+- PWA installation
+- Offline caching
+- PWA updates
 
 ### 4. Start Playing
 
-Open the application in your browser.
-
-Choose the desired game mode and difficulty level, then start playing.
+Open the local or deployed website, select a game mode, choose the desired difficulty when playing against the computer, and start playing.
 
 ---
 
 ## 🌐 Browser Support
 
-The project is intended for modern browsers that support standard web technologies.
+The application targets modern browsers supporting standard HTML, CSS, JavaScript, and PWA APIs.
 
 Recommended browsers include:
 
-* Google Chrome
-* Microsoft Edge
-* Mozilla Firefox
-* Safari
+- Google Chrome
+- Microsoft Edge
+- Mozilla Firefox
+- Safari
 
-Some PWA features, especially installation and offline behavior, may vary depending on the browser and operating system.
+PWA installation and some Service Worker capabilities can vary between browsers and operating systems.
 
 ---
 
 ## 🔒 Privacy
 
-This application does not require users to create an account or provide personal information.
+The game is designed to run locally in the browser.
 
-The game operates locally in the browser.
+It does not require:
 
-The project does not include:
+- User registration
+- Authentication
+- Personal profiles
+- A remote game database
+- Server-side game processing
+- Online multiplayer infrastructure
 
-* User authentication
-* Online multiplayer
-* Server-side game processing
-* Personal user accounts
-* A remote game database
-
-Game interactions are handled on the client side.
+Gameplay logic runs on the client.
 
 ---
 
@@ -284,91 +329,82 @@ Game interactions are handled on the client side.
 
 **Online multiplayer is not currently supported.**
 
-The available Player vs Player mode is intended for two players using the **same device**.
+The Two Players mode is designed for local play on the same device.
 
 There is currently no:
 
-* Online matchmaking
-* Multiplayer server
-* Room system
-* WebSocket connection
-* Real-time remote gameplay
-
-Online multiplayer may be considered as a future feature.
-
----
-
-## 📸 Screenshots
-
-### Main Menu
-
-![Main Menu](screenshots/menu.png)
-
-### Gameplay
-
-![Gameplay](screenshots/gameplay.png)
-
-### Mobile View
-
-![Mobile View](screenshots/mobile.png)
-
-
-If the project contains screenshots, replace the example paths with the actual screenshot filenames.
+- ❌ Online matchmaking
+- ❌ Multiplayer server
+- ❌ Room system
+- ❌ WebSocket gameplay
+- ❌ Real-time remote multiplayer
+- ❌ User account system
 
 ---
 
-## 🔮 Future Improvements
+## 🔮 Possible Future Improvements
 
-Possible future improvements include:
+Potential future features include:
 
-* 🌐 Online multiplayer
-* 🏆 Leaderboard
-* 👤 Player profiles
-* 📊 Game statistics
-* 🧠 Improved AI
-* 🔊 Sound effects
-* 🎨 Additional themes
-* ✨ More animations
-* ⚙️ Additional customization options
-* 📴 Improved offline-first functionality
-* 🌍 Online game rooms
-* 🔗 Shareable game sessions
+- 🌐 Online multiplayer
+- 🏆 Global leaderboard
+- 📊 Extended statistics
+- 💾 Persistent game history
+- 🔊 Sound effects
+- 🎨 Additional themes
+- ✨ More visual animations
+- ⚙️ Additional gameplay customization
+- 🔗 Shareable game sessions
+- 🌍 Online game rooms
 
-These features are potential future improvements and are **not currently part of the application** unless implemented.
+These are future ideas and are not part of the current implementation unless explicitly added to the project.
 
 ---
 
 ## 🎯 Project Goals
 
-The main goals of this project are:
+This project focuses on:
 
-* Practice HTML, CSS, and JavaScript
-* Build an interactive browser game
-* Implement game logic and state management
-* Create a responsive user interface
-* Learn and implement PWA concepts
-* Provide an installable web application
-* Practice client-side development
+- Learning and practicing HTML, CSS, and JavaScript
+- Building a polished browser game
+- Implementing game state and win detection
+- Creating a responsive user interface
+- Implementing AI decision-making
+- Understanding the Minimax algorithm
+- Learning Progressive Web App concepts
+- Supporting offline-first gameplay
+- Implementing Service Worker update handling
+- Building a multilingual web application
 
 ---
 
 ## 📌 Current Status
 
-**Project Type:** Browser Game / PWA
-
-**Current Gameplay:**
-
-* ✅ Player vs Computer
-* ✅ Player vs Player — Same Device
-* ✅ AI Difficulty Levels
-* ✅ Win / Loss / Draw Detection
-* ✅ Responsive UI
-* ✅ PWA
-* ✅ Offline-oriented gameplay
-* ❌ Online Multiplayer
-* ❌ Online Matchmaking
-* ❌ User Accounts
-* ❌ Server-side Backend
+| Feature | Status |
+|---|:---:|
+| Player vs Computer | ✅ |
+| Player vs Player — Same Device | ✅ |
+| Easy AI | ✅ |
+| Medium AI | ✅ |
+| Impossible / Minimax AI | ✅ |
+| X / O Selection | ✅ |
+| Score Tracking | ✅ |
+| Editable Player Names | ✅ |
+| Win Detection | ✅ |
+| Draw Detection | ✅ |
+| Multilingual UI | ✅ |
+| RTL Support | ✅ |
+| Automatic Dark Mode | ✅ |
+| Responsive UI | ✅ |
+| PWA | ✅ |
+| PWA Installation | ✅ |
+| Offline Gameplay | ✅ |
+| PWA Update Detection | ✅ |
+| In-App PWA Update | ✅ |
+| Online Multiplayer | ❌ |
+| Online Matchmaking | ❌ |
+| User Accounts | ❌ |
+| Server-side Backend | ❌ |
 
 ---
 
@@ -376,16 +412,19 @@ The main goals of this project are:
 
 **Amir Mohammad Hedayati Nia**
 
+GitHub:  
+https://github.com/HedayatiNiaDev
+
 ---
 
 ## ⭐ Support
 
-If you found this project interesting or useful, consider giving the repository a ⭐ **Star** on GitHub.
+If you like the project, consider giving the repository a ⭐ **Star** on GitHub.
 
 ---
 
-### 🎮 About the Project
+## 🎮 About
 
-A simple and modern Tic-Tac-Toe game built with web technologies, featuring AI gameplay, local multiplayer, responsive design, and Progressive Web App capabilities.
+A clean and modern Tic Tac Toe PWA built with vanilla web technologies, featuring local multiplayer, AI opponents, Minimax gameplay, multilingual support, automatic dark mode, offline functionality, installation support, and seamless PWA updates.
 
-**Play locally. Have fun. 🎮**
+**Play locally. Install it. Play offline. Have fun. 🎮**
