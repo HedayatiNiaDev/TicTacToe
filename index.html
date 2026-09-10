@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="description" content="An interactive and responsive Tic-Tac-Toe game built with HTML, CSS, and JavaScript.">
     <meta name="author" content="Amir Mohammad Hedayati Nia">
-    <title>Tic Tac Toe</title>
+    <title data-i18n="gameName">Tic Tac Toe</title>
 
     <!-- PWA -->
     <link rel="manifest" href="manifest.json">
@@ -20,18 +20,24 @@
     <link rel="icon" href="favicon.webp">
     <link rel="stylesheet" href="assets/bootstrap-icons/bootstrap-icons.min.css">
     <link rel="stylesheet" href="css/style.css">
+    <script>
+        (function () {
+            var theme = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
 </head>
 <body>
     <div id="notsupport"><p data-i18n="notSupport">Your screen size is not supported</p></div>
 
     <header class="topbar">
         <div class="brand"><img class="logo" src="./favicon.webp" alt="Tic-Tac-Toe-Logo"><span data-i18n="brand">Tic Tac Toe</span></div>
-        <a class="github-link" href="https://github.com/HedayatiNiaDev" target="_blank" rel="noopener"><span data-i18n="github">GitHub</span> <i class="bi bi-arrow-up-right"></i></a>
+        <a class="github-link" href="https://github.com/HedayatiNiaDev" target="_blank" rel="noopener" data-tooltip="HedayatiNiaDev"><span data-i18n="github">GitHub</span> <i class="bi bi-github"></i></a>
     </header>
 
     <main id="container" class="container fade-in">
         <div class="hero">
-            <h1 data-i18n="heroTitle1">Tic-Tac-Toe</h1>
+            <h1 data-i18n="gameName">Tic-Tac-Toe</h1>
             <p data-i18n="heroDesc">Pick a mode, make your move, and enjoy the game.</p>
         </div>
 
@@ -77,5 +83,6 @@
     <script src="js/i18n.js"></script>
     <script src="js/script.js"></script>
     <script src="js/pwa.js"></script>
+    <script src="js/theme.js"></script>
 </body>
 </html>

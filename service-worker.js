@@ -1,5 +1,5 @@
 // Bump this version any time cached files change to force an update.
-const CACHE_NAME = 'tic-tac-toe-v3';
+const CACHE_NAME = 'tic-tac-toe-v2.1';
 
 // Local app-shell files (same-origin)
 const ASSETS_TO_CACHE = [
@@ -129,15 +129,29 @@ self.addEventListener('install', (event) => {
                         cacheStylesheetAndFonts(cache, url)
                     )
                 );
-
-                return self.skipWaiting();
             })
             .catch(() => {
                 // Prevent installation from crashing because
                 // of a third-party resource.
-                return self.skipWaiting();
             })
     );
+
+    // Do NOT call self.skipWaiting() here. The new worker stays in the
+    // "waiting" state until the page asks it to take over (see the
+    // SKIP_WAITING message handler below), so the user gets a chance to
+    // press the "Update" button instead of being force-updated silently.
+});
+
+/**
+ * Message
+ *
+ * Lets the page tell a waiting service worker to activate immediately,
+ * which is how the in-app "Update" button applies a new version.
+ */
+self.addEventListener('message', (event) => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
 });
 
 /**

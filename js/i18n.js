@@ -2,7 +2,7 @@
 const translations = {
     en: {
         brand: "Tic Tac Toe",
-        heroTitle1: "Tic Tac Toe",
+        gameName: "Tic Tac Toe",
         heroDesc: "Pick a mode, make your move, and enjoy the game.",
         singlePlayer: "Single Player",
         twoPlayersTitle: "Two Players",
@@ -27,11 +27,13 @@ const translations = {
         github: "GitHub",
         notSupport: "Your screen size is not supported",
         language: "Language",
-        changeLanguage: "Change language"
+        changeLanguage: "Change language",
+        installApp: "Install",
+        updateApp: "Update"
     },
     fa: {
         brand: "دوز",
-        heroTitle1: "بازی دوز",
+        gameName: "بازی دوز",
         heroDesc: "یک حالت رو انتخاب کن، حرکتت رو بزن و از بازی لذت ببر.",
         singlePlayer: "تک‌نفره",
         twoPlayersTitle: "دو نفره",
@@ -56,11 +58,13 @@ const translations = {
         github: "گیت‌هاب",
         notSupport: "اندازه‌ی صفحه‌نمایش شما پشتیبانی نمی‌شود",
         language: "زبان",
-        changeLanguage: "تغییر زبان"
+        changeLanguage: "تغییر زبان",
+        installApp: "نصب برنامه",
+        updateApp: "به‌روزرسانی"
     },
     ar: {
         brand: "إكس أو",
-        heroTitle1: "إكس أو",
+        gameName: "إكس أو",
         heroDesc: "اختر نمطًا، قم بحركتك، واستمتع باللعبة.",
         singlePlayer: "لاعب واحد",
         twoPlayersTitle: "لاعبان",
@@ -85,11 +89,13 @@ const translations = {
         github: "جيت‌هاب",
         notSupport: "حجم الشاشة غير مدعوم",
         language: "اللغة",
-        changeLanguage: "تغيير اللغة"
+        changeLanguage: "تغيير اللغة",
+        installApp: "تثبيت التطبيق",
+        updateApp: "تحديث"
     },
     es: {
         brand: "Tres en Raya",
-        heroTitle1: "Tres en Raya",
+        gameName: "Tres en Raya",
         heroDesc: "Elige un modo, haz tu jugada y disfruta del juego.",
         singlePlayer: "Un Jugador",
         twoPlayersTitle: "Dos Jugadores",
@@ -114,11 +120,13 @@ const translations = {
         github: "GitHub",
         notSupport: "El tamaño de tu pantalla no es compatible",
         language: "Idioma",
-        changeLanguage: "Cambiar idioma"
+        changeLanguage: "Cambiar idioma",
+        installApp: "Instalar",
+        updateApp: "Actualizar"
     },
     fr: {
         brand: "Morpion",
-        heroTitle1: "Morpion",
+        gameName: "Morpion",
         heroDesc: "Choisissez un mode, jouez votre coup et profitez du jeu.",
         singlePlayer: "Un Joueur",
         twoPlayersTitle: "Deux Joueurs",
@@ -143,7 +151,9 @@ const translations = {
         github: "GitHub",
         notSupport: "La taille de votre écran n'est pas prise en charge",
         language: "Langue",
-        changeLanguage: "Changer de langue"
+        changeLanguage: "Changer de langue",
+        installApp: "Installer",
+        updateApp: "Mettre à jour"
     }
 };
 
@@ -198,7 +208,7 @@ function buildLanguageSwitcher() {
     const wrap = document.createElement("div");
     wrap.className = "lang-switcher";
     wrap.innerHTML = `
-        <button id="langToggle" class="lang-toggle" aria-haspopup="true" aria-expanded="false" data-i18n="change_language" aria-label="Change language">
+        <button id="langToggle" class="lang-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Change language">
             <i class="bi bi-translate"></i><span id="langCurrent"></span>
         </button>
         <div id="langMenu" class="lang-menu" role="menu"></div>
@@ -241,11 +251,6 @@ function refreshLangSwitcherUI() {
     if (toggle) {
         toggle.setAttribute(
             "aria-label",
-            t("changeLanguage")
-        );
-
-        toggle.setAttribute(
-            "title",
             t("changeLanguage")
         );
     }
