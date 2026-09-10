@@ -322,7 +322,7 @@ body::before {
 [data-tooltip]::before {
     content: "";
     position: absolute;
-    top: calc(100% + 5px);
+    top: calc(100% + 6px);
     inset-inline-end: 14px;
     width: 8px;
     height: 8px;
