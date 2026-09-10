@@ -1,102 +1,175 @@
-// Game state initialization
-const board = ['', '', '', '', '', '', '', '', '']; // Represents the Tic-Tac-Toe board
-let currentPlayer = 'X'; // Current player (X or O)
-let gameActive = false; // Tracks if the game is active
-let gameMode = ''; // Tracks the game mode (single or two players)
-let difficulty = ''; // Tracks the difficulty level in single-player mode
-let scores = { X: 0, O: 0 }; // Tracks the scores for X and O
-let playerSymbol = 'X'; // Player's symbol (X or O)
-let computerSymbol = 'O'; // Computer's symbol (O or X)
+// =========================================================
+// Tic-Tac-Toe Game Script
+// Compatible with the original project structure
+// =========================================================
 
-// Define winning combinations
+// Game state
+const board = ['', '', '', '', '', '', '', '', ''];
+
+let currentPlayer = 'X';
+let gameActive = false;
+let gameMode = '';
+let difficulty = '';
+
+let scores = {
+    X: 0,
+    O: 0
+};
+
+let playerSymbol = 'X';
+let computerSymbol = 'O';
+
+// Winning combinations
 const winningCombinations = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
-    [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
-    [0, 4, 8], [2, 4, 6] // Diagonals
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
 ];
 
-// DOM element selections
+// DOM elements
 const statusDisplay = document.getElementById('status');
 const equalDisplay = document.getElementById('equal');
 const scoreBoard = document.getElementById('scoreboard');
 const resetButton = document.getElementById('reset');
 const changeModeButton = document.getElementById('changeMode');
+
 const player2Name = document.getElementById('player2Name');
 const player1Name = document.getElementById('player1Name');
+
 const scoreXDisplay = document.getElementById('scoreX');
 const scoreODisplay = document.getElementById('scoreO');
+
 const modeSelection = document.getElementById('modeSelection');
 const player2Icon = document.getElementById('player2-icon');
 const gameBoard = document.getElementById('gameBoard');
 const hero = document.querySelector('.hero');
+
 const symbolIsText = document.getElementById('symbolIsText');
 const switchToText = document.getElementById('switchToText');
-// Cached once instead of re-queried on every status update / win / reset
+
 const player1ScoreEl = document.getElementById('player1Score');
 const player2ScoreEl = document.getElementById('player2Score');
-const player1SymbolDisplay = document.getElementById('player1SymbolForDisplay');
-const player2SymbolDisplay = document.getElementById('player2SymbolForDisplay');
 
-// Track whether the player has manually renamed a player field,
-// so language switches don't overwrite a custom name.
+const player1SymbolDisplay = document.getElementById(
+    'player1SymbolForDisplay'
+);
+
+const player2SymbolDisplay = document.getElementById(
+    'player2SymbolForDisplay'
+);
+
 let player1NameCustom = false;
 let player2NameCustom = false;
-player1Name.addEventListener('input', () => { player1NameCustom = true; });
-player2Name.addEventListener('input', () => { player2NameCustom = true; });
 
-// Renders the "Symbol is X · switch to O" button in the current language
-function updateSymbolButtonText() {
-    symbolIsText.textContent = t('symbolIs', { symbol: playerSymbol });
-    switchToText.textContent = t('switchTo', { symbol: playerSymbol === 'X' ? 'O' : 'X' });
+if (player1Name) {
+    player1Name.addEventListener('input', () => {
+        player1NameCustom = true;
+    });
 }
 
-// Renders the status line ("Single Player (Easy)" / "Two Players") in the current language
+if (player2Name) {
+    player2Name.addEventListener('input', () => {
+        player2NameCustom = true;
+    });
+}
+
+// =========================================================
+// Translation and status
+// =========================================================
+
+function updateSymbolButtonText() {
+    if (!symbolIsText || !switchToText) {
+        return;
+    }
+
+    symbolIsText.textContent = t('symbolIs', {
+        symbol: playerSymbol
+    });
+
+    switchToText.textContent = t('switchTo', {
+        symbol: playerSymbol === 'X' ? 'O' : 'X'
+    });
+}
+
 function updateStatusText() {
+    if (!statusDisplay) {
+        return;
+    }
+
     if (gameMode === 'single') {
-        statusDisplay.textContent = t('statusSingle', { difficulty: translatedDifficulty(difficulty) });
+        statusDisplay.textContent = t('statusSingle', {
+            difficulty: translatedDifficulty(difficulty)
+        });
     } else if (gameMode === 'two') {
         statusDisplay.textContent = t('statusTwo');
     }
 }
 
-// Called by i18n.js whenever the user switches language
 function onLanguageChanged() {
     updateSymbolButtonText();
     updateStatusText();
+
     if (gameMode === 'single') {
-        if (!player1NameCustom) player1Name.textContent = t('you');
-        if (!player2NameCustom) player2Name.textContent = t('robot');
+        if (!player1NameCustom && player1Name) {
+            player1Name.textContent = t('you');
+        }
+
+        if (!player2NameCustom && player2Name) {
+            player2Name.textContent = t('robot');
+        }
     } else if (gameMode === 'two') {
-        if (!player1NameCustom) player1Name.textContent = t('player1');
-        if (!player2NameCustom) player2Name.textContent = t('player2');
+        if (!player1NameCustom && player1Name) {
+            player1Name.textContent = t('player1');
+        }
+
+        if (!player2NameCustom && player2Name) {
+            player2Name.textContent = t('player2');
+        }
     }
 }
 
 updateSymbolButtonText();
 
-// Create game board cells (built once via a DocumentFragment to avoid
-// triggering a reflow on every appendChild call)
+// =========================================================
+// Board creation
+// =========================================================
+
 const boardElement = document.querySelector('.board');
+
 const cellsFragment = document.createDocumentFragment();
-for (let i = 0; i < 9; i++) {
+
+for (let index = 0; index < 9; index++) {
     const cell = document.createElement('div');
+
     cell.classList.add('cell');
-    cell.setAttribute('data-index', i);
+    cell.setAttribute('data-index', index);
+
     cellsFragment.appendChild(cell);
 }
+
 boardElement.appendChild(cellsFragment);
+
 const cells = document.querySelectorAll('.cell');
 
-// Create game controls container
+// =========================================================
+// Controls
+// =========================================================
+
 const controlsContainer = document.createElement('div');
+
 controlsContainer.className = 'game-controls';
+
 gameBoard.appendChild(controlsContainer);
 
-// Move control buttons to container
 controlsContainer.appendChild(resetButton);
 controlsContainer.appendChild(changeModeButton);
 
-// Event listeners for game mode buttons
+// Game mode buttons
 document.getElementById('twoPlayers').addEventListener('click', () => {
     gameMode = 'two';
     startGame();
@@ -120,97 +193,242 @@ document.getElementById('impossible').addEventListener('click', () => {
     startGame();
 });
 
-// Event listener for switching symbols (X or O)
+// Switch symbol
 document.getElementById('switchSymbol').addEventListener('click', () => {
     if (playerSymbol === 'X') {
-        playerSymbol = 'O'; // Player chooses O
-        computerSymbol = 'X'; // Computer is X
+        playerSymbol = 'O';
+        computerSymbol = 'X';
     } else {
-        playerSymbol = 'X'; // Player chooses X
-        computerSymbol = 'O'; // Computer is O
-    }
-    updateSymbolButtonText(); // Update button text in the current language
-
-    // If player chooses O in single-player mode, computer makes the first move
-    if (playerSymbol === 'O' && gameMode === 'single') {
-        currentPlayer = 'X'; // Computer starts
-        setTimeout(computerMove, 500);
-    } else {
-        currentPlayer = 'X'; // Player starts
+        playerSymbol = 'X';
+        computerSymbol = 'O';
     }
 
-    // Update game status
+    updateSymbolButtonText();
+
+    if (gameMode === 'single' && playerSymbol === 'O') {
+        currentPlayer = computerSymbol;
+
+        if (gameActive) {
+            gameActive = false;
+            setTimeout(computerMove, 500);
+        }
+    } else {
+        currentPlayer = 'X';
+    }
+
     updateStatus();
 });
 
-// Event listeners for game controls
+// Game controls
 resetButton.addEventListener('click', resetGame);
 changeModeButton.addEventListener('click', changeMode);
 
-// Single delegated listener instead of one per cell — cheaper to set up
-// and automatically covers any cell added/removed later.
+// Delegated board listener
 boardElement.addEventListener('click', (event) => {
     const cell = event.target.closest('.cell');
-    if (cell) cellClick(cell);
+
+    if (cell) {
+        cellClick(cell);
+    }
 });
 
-// Function to change game mode
+// =========================================================
+// Game mode
+// =========================================================
+
 function changeMode() {
-    // Reset scores
-    scores = { X: 0, O: 0 };
+    scores = {
+        X: 0,
+        O: 0
+    };
+
     scoreXDisplay.textContent = '0';
     scoreODisplay.textContent = '0';
-    gameMode = ''; // No active game mode while on the selection screen
 
-    // Hide game board and show mode selection
+    gameMode = '';
+    gameActive = false;
+
     gameBoard.style.display = 'none';
     modeSelection.style.display = '';
     hero.style.display = '';
 
-    // Reset the board
     resetBoard();
 }
 
-// Function to handle cell clicks
-function cellClick(cell) {
-    const index = cell.getAttribute('data-index');
+function startGame() {
+    player1NameCustom = false;
+    player2NameCustom = false;
 
-    // Ignore click if cell is filled or game is inactive
-    if (board[index] !== '' || !gameActive) return;
+    if (gameMode === 'single') {
+        updateStatusText();
 
-    // Update cell and check for winner
-    updateCell(cell, index);
-    checkForWinner();
+        player2Icon.classList.remove('bi-person-fill');
+        player2Icon.classList.add('bi-robot');
 
-    // Handle computer move in single-player mode
-    if (gameMode === 'single' && gameActive && currentPlayer === computerSymbol) {
+        player1Name.textContent = t('you');
+        player2Name.textContent = t('robot');
+
+        player1SymbolDisplay.textContent = `(${playerSymbol}):`;
+        player2SymbolDisplay.textContent = `(${computerSymbol}):`;
+    } else {
+        updateStatusText();
+
+        player2Icon.classList.remove('bi-robot');
+        player2Icon.classList.add('bi-person-fill');
+
+        player1Name.textContent = t('player1');
+        player2Name.textContent = t('player2');
+
+        player1SymbolDisplay.textContent = '(X):';
+        player2SymbolDisplay.textContent = '(O):';
+    }
+
+    clearCellAnimations();
+    resetBoard();
+
+    gameActive = true;
+
+    currentPlayer = 'X';
+
+    gameBoard.style.display = '';
+    modeSelection.style.display = 'none';
+    hero.style.display = 'none';
+
+    updateStatus();
+
+    cells.forEach((cell, index) => {
+        setTimeout(() => {
+            cell.classList.add('visible');
+        }, index * 70);
+    });
+
+    // If the player selected O, computer starts
+    if (gameMode === 'single' && playerSymbol === 'O') {
         gameActive = false;
-        setTimeout(computerMove, 500);
+
+        setTimeout(() => {
+            computerMove();
+        }, 500);
     }
 }
 
-// Function to update cell content
-function updateCell(cell, index) {
-    board[index] = currentPlayer; // Update board state
-    cell.textContent = currentPlayer; // Update cell display
-    cell.classList.add('scale-in'); // Add animation
+function resetGame() {
+    clearCellAnimations();
+    resetBoard();
+
+    gameActive = true;
+
+    if (gameMode === 'single' && playerSymbol === 'O') {
+        currentPlayer = computerSymbol;
+        gameActive = false;
+
+        updateStatus();
+
+        setTimeout(() => {
+            computerMove();
+        }, 500);
+    } else {
+        currentPlayer = 'X';
+        updateStatus();
+    }
+
+    cells.forEach((cell, index) => {
+        setTimeout(() => {
+            cell.classList.add('reset-animation');
+
+            setTimeout(() => {
+                cell.classList.remove('reset-animation');
+                cell.classList.add('visible');
+            }, 500);
+        }, index * 50);
+    });
 }
 
-// Function to switch players
+function resetBoard() {
+    board.fill('');
+
+    currentPlayer = 'X';
+
+    cells.forEach((cell) => {
+        cell.textContent = '';
+        cell.classList.remove(
+            'win',
+            'scale-in',
+            'visible',
+            'reset-animation'
+        );
+    });
+
+    if (equalDisplay) {
+        equalDisplay.classList.add('opacity-0');
+    }
+
+    if (scoreBoard) {
+        scoreBoard.classList.remove('selectPlayerScore');
+    }
+
+    if (player1ScoreEl) {
+        player1ScoreEl.classList.remove(
+            'selectPlayerScore',
+            'winPlayerScore'
+        );
+    }
+
+    if (player2ScoreEl) {
+        player2ScoreEl.classList.remove(
+            'selectPlayerScore',
+            'winPlayerScore'
+        );
+    }
+}
+
+// =========================================================
+// Cell and player handling
+// =========================================================
+
+function cellClick(cell) {
+    const index = Number(cell.getAttribute('data-index'));
+
+    if (
+        board[index] !== '' ||
+        !gameActive ||
+        currentPlayer !== playerSymbol
+    ) {
+        return;
+    }
+
+    updateCell(cell, index);
+    checkForWinner();
+
+    if (
+        gameMode === 'single' &&
+        gameActive &&
+        currentPlayer === computerSymbol
+    ) {
+        gameActive = false;
+
+        setTimeout(() => {
+            computerMove();
+        }, 350);
+    }
+}
+
+function updateCell(cell, index) {
+    board[index] = currentPlayer;
+    cell.textContent = currentPlayer;
+    cell.classList.add('scale-in');
+}
+
 function changePlayer() {
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
     updateStatus();
 }
 
-// Clears the highlight classes on both score displays in one place
-// instead of repeating the same two lines in every function that needs it.
-function clearScoreHighlights() {
-    player1ScoreEl.classList.remove('selectPlayerScore', 'winPlayerScore');
-    player2ScoreEl.classList.remove('selectPlayerScore', 'winPlayerScore');
-}
-
-// Function to update game status display
 function updateStatus() {
+    if (!player1ScoreEl || !player2ScoreEl) {
+        return;
+    }
+
     if (currentPlayer === playerSymbol) {
         player1ScoreEl.classList.add('selectPlayerScore');
         player2ScoreEl.classList.remove('selectPlayerScore');
@@ -218,44 +436,111 @@ function updateStatus() {
         player1ScoreEl.classList.remove('selectPlayerScore');
         player2ScoreEl.classList.add('selectPlayerScore');
     }
+
     gameActive = true;
 }
 
-// Function to check for winner
-function checkForWinner() {
+function clearScoreHighlights() {
+    if (player1ScoreEl) {
+        player1ScoreEl.classList.remove(
+            'selectPlayerScore',
+            'winPlayerScore'
+        );
+    }
+
+    if (player2ScoreEl) {
+        player2ScoreEl.classList.remove(
+            'selectPlayerScore',
+            'winPlayerScore'
+        );
+    }
+}
+
+function clearCellAnimations() {
+    cells.forEach((cell) => {
+        cell.classList.remove(
+            'scale-in',
+            'win',
+            'visible',
+            'reset-animation'
+        );
+    });
+
+    clearScoreHighlights();
+
+    if (equalDisplay) {
+        equalDisplay.classList.add('opacity-0');
+    }
+
+    if (scoreBoard) {
+        scoreBoard.classList.remove('selectPlayerScore');
+    }
+}
+
+// =========================================================
+// Winner and score
+// =========================================================
+
+function getWinner(state = board) {
     for (const combination of winningCombinations) {
         const [a, b, c] = combination;
-        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-            gameActive = false;
-            // Remove selection highlights
-            clearScoreHighlights();
 
-            // Highlight winner
-            if (board[a] === playerSymbol) {
-                player1ScoreEl.classList.add('winPlayerScore');
-            } else if (board[a] === computerSymbol) {
-                player2ScoreEl.classList.add('winPlayerScore');
-            }
-
-            // Highlight winning cells
-            highlightWinningCells(combination);
-            updateScore(board[a]);
-
-            // Auto reset after delay
-            setTimeout(resetGame, 2005);
-
-            return;
+        if (
+            state[a] !== '' &&
+            state[a] === state[b] &&
+            state[a] === state[c]
+        ) {
+            return state[a];
         }
     }
 
-    // Check for draw
-    if (!board.includes('')) {
-        clearScoreHighlights();
-        equalDisplay.classList.remove('opacity-0');
-        scoreBoard.classList.add('selectPlayerScore');
+    if (!state.includes('')) {
+        return 'tie';
+    }
+
+    return null;
+}
+
+function checkForWinner() {
+    const winner = getWinner();
+
+    if (winner === 'X' || winner === 'O') {
         gameActive = false;
 
-        // Auto reset after delay
+        clearScoreHighlights();
+
+        if (winner === playerSymbol) {
+            player1ScoreEl.classList.add('winPlayerScore');
+        } else {
+            player2ScoreEl.classList.add('winPlayerScore');
+        }
+
+        const winningCombination = winningCombinations.find(
+            ([a, b, c]) =>
+                board[a] !== '' &&
+                board[a] === board[b] &&
+                board[a] === board[c]
+        );
+
+        if (winningCombination) {
+            highlightWinningCells(winningCombination);
+        }
+
+        updateScore(winner);
+
+        setTimeout(resetGame, 2005);
+
+        return;
+    }
+
+    if (winner === 'tie') {
+        clearScoreHighlights();
+
+        equalDisplay.classList.remove('opacity-0');
+        scoreBoard.classList.add('selectPlayerScore');
+
+        gameActive = false;
+
         setTimeout(resetGame, 1500);
 
         return;
@@ -264,347 +549,279 @@ function checkForWinner() {
     changePlayer();
 }
 
-// Function to highlight winning cells
 function highlightWinningCells(combination) {
-    combination.forEach(index => {
+    combination.forEach((index) => {
         cells[index].classList.add('win');
     });
 }
 
-// Function to update score
-// (fixed: was hardcoded to compare against 'X' instead of the winning
-// symbol itself, which mis-attributed points whenever the player was O)
 function updateScore(winningSymbol) {
     scores[winningSymbol]++;
-    scoreXDisplay.textContent = scores.X;
-    scoreODisplay.textContent = scores.O;
+    if (currentPlayer == 'X') {
+        scoreXDisplay.textContent = scores.O;
+        scoreODisplay.textContent = scores.X;
+    }
+    else {
+        scoreXDisplay.textContent = scores.X;
+        scoreODisplay.textContent = scores.O;
+    }
 }
 
-// Function to handle computer move
+// =========================================================
+// Computer AI
+// =========================================================
+
 function computerMove() {
+    if (getWinner() !== null) {
+        return;
+    }
+
     let index;
+
     switch (difficulty) {
         case 'Easy':
-            index = Math.random() < 0.7 ? getSmartMove() : getRandomEmptyCell(); // 70% smart moves
+            index =
+                Math.random() < 0.7
+                    ? getSmartMove()
+                    : getRandomEmptyCell();
             break;
+
         case 'Medium':
-            index = Math.random() < 0.9 ? getSmartMove() : getRandomEmptyCell(); // 90% smart moves
+            index =
+                Math.random() < 0.9
+                    ? getSmartMove()
+                    : getRandomEmptyCell();
             break;
+
         case 'Impossible':
-            index = getBestMove(); // Always best move
+            index = getBestMove();
             break;
+
         default:
-            index = getRandomEmptyCell(); // Random move
+            index = getRandomEmptyCell();
+            break;
     }
+
+    if (index === -1 || index === undefined) {
+        return;
+    }
+
     const cell = cells[index];
-    updateCell(cell, index); // Update the cell
-    checkForWinner(); // Check for a winner
+
+    currentPlayer = computerSymbol;
+
+    updateCell(cell, index);
+    checkForWinner();
 }
 
-// Function to get random empty cell
+// =========================================================
+// Easy / Medium AI
+// =========================================================
+
 function getRandomEmptyCell() {
     const emptyCells = [];
-    for (let i = 0; i < board.length; i++) {
-        if (board[i] === '') emptyCells.push(i);
+
+    for (let index = 0; index < 9; index++) {
+        if (board[index] === '') {
+            emptyCells.push(index);
+        }
     }
-    return emptyCells[Math.floor(Math.random() * emptyCells.length)];
+
+    if (emptyCells.length === 0) {
+        return -1;
+    }
+
+    return emptyCells[
+        Math.floor(Math.random() * emptyCells.length)
+    ];
 }
 
-// Function to get smart move
 function getSmartMove() {
-    // Check for a winning move for the computer
-    for (let i = 0; i < 9; i++) {
-        if (board[i] === '') {
-            board[i] = computerSymbol;
-            if (checkWinner() === computerSymbol) {
-                board[i] = '';
-                return i;
-            }
-            board[i] = '';
-        }
+    // Computer winning move
+    const computerWinningMove = findWinningMove(computerSymbol);
+
+    if (computerWinningMove !== -1) {
+        return computerWinningMove;
     }
 
-    // Block the player's winning move
-    for (let i = 0; i < 9; i++) {
-        if (board[i] === '') {
-            board[i] = playerSymbol;
-            if (checkWinner() === playerSymbol) {
-                board[i] = '';
-                return i;
-            }
-            board[i] = '';
-        }
+    // Block player's winning move
+    const playerWinningMove = findWinningMove(playerSymbol);
+
+    if (playerWinningMove !== -1) {
+        return playerWinningMove;
     }
 
-    // Take center if available
-    if (board[4] === '') return 4;
+    // Center
+    if (board[4] === '') {
+        return 4;
+    }
 
-    // Take corners
+    // Corners
     const corners = [0, 2, 6, 8];
-    const freeCorners = corners.filter(i => board[i] === '');
+
+    const freeCorners = corners.filter(
+        (index) => board[index] === ''
+    );
+
     if (freeCorners.length > 0) {
-        return freeCorners[Math.floor(Math.random() * freeCorners.length)];
+        return freeCorners[
+            Math.floor(Math.random() * freeCorners.length)
+        ];
     }
 
-    // Take edges
+    // Edges
     const edges = [1, 3, 5, 7];
-    const freeEdges = edges.filter(i => board[i] === '');
+
+    const freeEdges = edges.filter(
+        (index) => board[index] === ''
+    );
+
     if (freeEdges.length > 0) {
-        return freeEdges[Math.floor(Math.random() * freeEdges.length)];
+        return freeEdges[
+            Math.floor(Math.random() * freeEdges.length)
+        ];
     }
 
-    return getRandomEmptyCell(); // Fallback to random move
+    return getRandomEmptyCell();
 }
 
-// Function to get best move (Minimax algorithm with alpha-beta pruning)
-// ================================
-// Lightweight Perfect Minimax
-// Bitboard + Alpha-Beta + Memoization
-// ================================
+function findWinningMove(symbol) {
+    for (let index = 0; index < 9; index++) {
+        if (board[index] !== '') {
+            continue;
+        }
 
-const WIN_MASKS = [
-    0b111000000, 0b000111000, 0b000000111,
-    0b100100100, 0b010010010, 0b001001001,
-    0b100010001, 0b001010100
+        board[index] = symbol;
+
+        const winner = getWinner();
+
+        board[index] = '';
+
+        if (winner === symbol) {
+            return index;
+        }
+    }
+
+    return -1;
+}
+
+// =========================================================
+// Impossible AI
+// Lightweight perfect Minimax
+// No Map, no string cache, no duplicated functions
+// =========================================================
+
+const PERFECT_MOVE_ORDER = [
+    4,
+    0,
+    2,
+    6,
+    8,
+    1,
+    3,
+    5,
+    7
 ];
 
-const minimaxCache = new Map();
-
-function hasWon(bits) {
-    for (const mask of WIN_MASKS) {
-        if ((bits & mask) === mask) return true;
-    }
-    return false;
-}
-
-function getBits(symbol) {
-    let bits = 0;
-
-    for (let i = 0; i < 9; i++) {
-        if (board[i] === symbol) {
-            bits |= (1 << (8 - i));
-        }
-    }
-
-    return bits;
-}
-
 function getBestMove() {
-    const playerBits = getBits(playerSymbol);
-    const computerBits = getBits(computerSymbol);
-
     let bestScore = -Infinity;
     let bestMove = -1;
 
-    for (let i = 0; i < 9; i++) {
-        const bit = 1 << (8 - i);
+    for (const index of PERFECT_MOVE_ORDER) {
+        if (board[index] !== '') {
+            continue;
+        }
 
-        if ((playerBits | computerBits) & bit) continue;
+        board[index] = computerSymbol;
 
         const score = minimax(
-            playerBits,
-            computerBits | bit,
+            0,
             false,
             -Infinity,
             Infinity
         );
 
+        board[index] = '';
+
         if (score > bestScore) {
             bestScore = score;
-            bestMove = i;
+            bestMove = index;
         }
     }
 
     return bestMove;
 }
 
-// Minimax algorithm implementation with alpha-beta pruning.
-// Pruning skips branches that can't influence the final decision, which
-// noticeably cuts down the number of recursive calls on "Impossible" mode.
-function minimax(playerBits, computerBits, isMaximizing, alpha, beta) {
-    // Immediate result
-    if (hasWon(computerBits)) return 10;
-    if (hasWon(playerBits)) return -10;
+function minimax(depth, isMaximizing, alpha, beta) {
+    const winner = getWinner();
 
-    const occupied = playerBits | computerBits;
-
-    // Draw
-    if (occupied === 0b111111111) return 0;
-
-    // Cache only exact states.
-    // Alpha-beta cutoffs are not cached because they may be bounds.
-    const key = `${playerBits}|${computerBits}|${isMaximizing}`;
-
-    if (minimaxCache.has(key)) {
-        return minimaxCache.get(key);
+    if (winner === computerSymbol) {
+        return 10 - depth;
     }
 
-    let bestScore;
+    if (winner === playerSymbol) {
+        return depth - 10;
+    }
+
+    if (winner === 'tie') {
+        return 0;
+    }
 
     if (isMaximizing) {
-        bestScore = -Infinity;
+        let bestScore = -Infinity;
 
-        for (let i = 0; i < 9; i++) {
-            const bit = 1 << (8 - i);
+        for (const index of PERFECT_MOVE_ORDER) {
+            if (board[index] !== '') {
+                continue;
+            }
 
-            if (occupied & bit) continue;
+            board[index] = computerSymbol;
 
             const score = minimax(
-                playerBits,
-                computerBits | bit,
+                depth + 1,
                 false,
                 alpha,
                 beta
             );
 
+            board[index] = '';
+
             bestScore = Math.max(bestScore, score);
             alpha = Math.max(alpha, bestScore);
 
-            if (beta <= alpha) break;
+            if (beta <= alpha) {
+                break;
+            }
         }
-    } else {
-        bestScore = Infinity;
 
-        for (let i = 0; i < 9; i++) {
-            const bit = 1 << (8 - i);
+        return bestScore;
+    }
 
-            if (occupied & bit) continue;
+    let bestScore = Infinity;
 
-            const score = minimax(
-                playerBits | bit,
-                computerBits,
-                true,
-                alpha,
-                beta
-            );
+    for (const index of PERFECT_MOVE_ORDER) {
+        if (board[index] !== '') {
+            continue;
+        }
 
-            bestScore = Math.min(bestScore, score);
-            beta = Math.min(beta, bestScore);
+        board[index] = playerSymbol;
 
-            if (beta <= alpha) break;
+        const score = minimax(
+            depth + 1,
+            true,
+            alpha,
+            beta
+        );
+
+        board[index] = '';
+
+        bestScore = Math.min(bestScore, score);
+        beta = Math.min(beta, bestScore);
+
+        if (beta <= alpha) {
+            break;
         }
     }
 
-    minimaxCache.set(key, bestScore);
     return bestScore;
-}
-
-
-// Function to check for a winner (for Minimax)
-function checkWinner() {
-    for (const combination of winningCombinations) {
-        const [a, b, c] = combination;
-        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
-            return board[a]; // Returns the symbol of the winner
-        }
-    }
-    if (!board.includes('')) return 'tie'; // If the board is full and no winner, it's a tie
-    return null; // No winner yet
-}
-
-// Shared reset of per-cell animation/highlight classes, used by both
-// startGame() and resetGame().
-function clearCellAnimations() {
-    cells.forEach(cell => cell.classList.remove('scale-in'));
-    player1ScoreEl.classList.remove('winPlayerScore');
-    player2ScoreEl.classList.remove('winPlayerScore');
-    equalDisplay.classList.add('opacity-0');
-    scoreBoard.classList.remove('selectPlayerScore');
-}
-
-// Function to start game
-function startGame() {
-    // Reset custom-name tracking for a fresh game
-    player1NameCustom = false;
-    player2NameCustom = false;
-
-    if (gameMode === 'single') {
-        updateStatusText();
-        player2Icon.classList.remove('bi-person-fill');
-        player2Icon.classList.add('bi-robot');
-        player1Name.textContent = t('you');
-        player2Name.textContent = t('robot');
-
-        // If player chooses O, computer makes the first move
-        if (playerSymbol === 'O') {
-            currentPlayer = 'X'; // Computer starts
-            setTimeout(computerMove, 500);
-        } else {
-            currentPlayer = 'X'; // Player starts
-        }
-    } else {
-        updateStatusText();
-        player2Icon.classList.remove('bi-robot');
-        player2Icon.classList.add('bi-person-fill');
-        player1Name.textContent = t('player1');
-        player2Name.textContent = t('player2');
-
-        // In two-player mode, X always starts
-        currentPlayer = 'X';
-    }
-
-    // Reset animations and styles
-    clearCellAnimations();
-    player1SymbolDisplay.textContent = `(${playerSymbol}):`;
-    player2SymbolDisplay.textContent = `(${computerSymbol}):`;
-
-    // Reset board and start game
-    resetBoard();
-    gameActive = true;
-    updateStatus();
-
-    // Show game board
-    modeSelection.style.display = 'none';
-    hero.style.display = 'none';
-    gameBoard.style.display = '';
-
-    // Animate cells appearance
-    cells.forEach((cell, index) => {
-        setTimeout(() => {
-            cell.classList.add('visible');
-        }, index * 100);
-    });
-}
-
-// Function to reset game
-function resetGame() {
-    // Reset animations and styles
-    clearCellAnimations();
-
-    // Update player and computer symbols
-    if (playerSymbol === 'X') {
-        currentPlayer = 'X'; // Player starts as X
-    } else {
-        currentPlayer = 'O'; // Player starts as O
-        // If player is O, computer (X) makes the first move
-        setTimeout(computerMove, 500);
-    }
-
-    resetBoard();
-    gameActive = true;
-    updateStatus();
-
-    // Animate cells reset
-    setTimeout(() => {
-        cells.forEach((cell, index) => {
-            cell.classList.add('reset-animation');
-            setTimeout(() => {
-                cell.classList.remove('reset-animation');
-                cell.classList.add('visible');
-            }, 500 + (index * 100));
-        });
-    }, 50);
-}
-
-// Function to reset board
-function resetBoard() {
-    board.fill('');
-    minimaxCache.clear();
-
-    currentPlayer = 'X';
-
-    cells.forEach(cell => {
-        cell.textContent = '';
-        cell.classList.remove('win');
-    });
 }
