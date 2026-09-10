@@ -1,7 +1,7 @@
 {
   "name": "Tic Tac Toe",
   "short_name": "TicTacToe",
-  "description": "Interactive Tic Tac Toe with single-player and two-player modes, playable offline.",
+  "description": "A modern, responsive, installable Tic Tac Toe Progressive Web App (PWA) built with HTML5, CSS3, and vanilla JavaScript.",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
