@@ -45,13 +45,25 @@ The game is fully client-side and supports **Single Player**, **Two Players on t
 
 ![Tic Tac Toe Main Menu](screenshots/menu.png)
 
+### 🖥️ Main Menu (Dark Mode)
+
+![Tic Tac Toe Main Menu](screenshots/menu_darkmode.png)
+
 ### 🎮 Gameplay
 
 ![Tic Tac Toe Gameplay](screenshots/gameplay.png)
 
+### 🎮 Gameplay (Dark Mode)
+
+![Tic Tac Toe Gameplay](screenshots/gameplay_darkmode.png)
+
 ### 📱 Mobile
 
 ![Tic Tac Toe Mobile](screenshots/mobile.png)
+
+### 📱 Mobile (Dark Mode)
+
+![Tic Tac Toe Mobile](screenshots/mobile_darkmode.png)
 
 ## 🌍 Supported Languages
 
