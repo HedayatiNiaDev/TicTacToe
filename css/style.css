@@ -1032,3 +1032,10 @@ a.fade-in,
         font-size: 15px;
     }
 }
+
+/*Disable print*/
+@media print {
+    html {
+        display: none;
+    }
+}
