@@ -292,14 +292,21 @@ function startGame() {
 
         player2Icon.classList.remove('bi-robot');
         player2Icon.classList.add('bi-person-fill');
-
+        if (currentPlayer == 'X') {
         player1Name.textContent = t('player1');
         player2Name.textContent = t('player2');
 
         player1SymbolDisplay.textContent = '(X):';
         player2SymbolDisplay.textContent = '(O):';
+        }
+        else {
+        player1Name.textContent = t('player2');
+        player2Name.textContent = t('player1');
 
-        currentPlayer = 'X';
+        player1SymbolDisplay.textContent = '(O):';
+        player2SymbolDisplay.textContent = '(X):';
+        }
+
         gameActive = true;
     }
 
