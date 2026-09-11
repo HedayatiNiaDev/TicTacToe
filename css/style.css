@@ -274,6 +274,7 @@ body::before {
 
 button {
     min-width: 38px;
+    min-height: 38px;
 }
 .github-link {
     display: flex;
