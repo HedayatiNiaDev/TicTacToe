@@ -1,5 +1,5 @@
 // Bump this version any time cached files change to force an update.
-const CACHE_NAME = 'tic-tac-toe-v2.1.9';
+const CACHE_NAME = 'tic-tac-toe-v2.2.0';
 
 // Local app-shell files (same-origin)
 const ASSETS_TO_CACHE = [

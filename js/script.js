@@ -580,7 +580,7 @@ function highlightWinningCells(combination) {
 
 function updateScore(winningSymbol) {
     scores[winningSymbol]++;
-    if (currentPlayer == 'X') {
+    if (playerSymbol == 'X') {
         scoreXDisplay.textContent = scores.X;
         scoreODisplay.textContent = scores.O;
     }
