@@ -277,7 +277,6 @@ function startGame() {
         player1SymbolDisplay.textContent = `(${playerSymbol}):`;
         player2SymbolDisplay.textContent = `(${computerSymbol}):`;
 
-        // اگر بازیکن O باشد، کامپیوتر X شروع می‌کند
         if (playerSymbol === 'O') {
             currentPlayer = computerSymbol;
             gameActive = false;
@@ -300,7 +299,6 @@ function startGame() {
         player1SymbolDisplay.textContent = '(X):';
         player2SymbolDisplay.textContent = '(O):';
 
-        // در بازی دو نفره، X همیشه شروع می‌کند
         currentPlayer = 'X';
         gameActive = true;
     }
@@ -576,12 +574,12 @@ function highlightWinningCells(combination) {
 function updateScore(winningSymbol) {
     scores[winningSymbol]++;
     if (currentPlayer == 'X') {
-        scoreXDisplay.textContent = scores.O;
-        scoreODisplay.textContent = scores.X;
-    }
-    else {
         scoreXDisplay.textContent = scores.X;
         scoreODisplay.textContent = scores.O;
+    }
+    else {
+        scoreXDisplay.textContent = scores.O;
+        scoreODisplay.textContent = scores.X;
     }
 }
 
@@ -590,7 +588,6 @@ function updateScore(winningSymbol) {
 // =========================================================
 
 function computerMove() {
-    // کامپیوتر نباید در حالت دو نفره حرکت کند
     if (gameMode !== 'single') {
         return;
     }
@@ -625,7 +622,6 @@ function computerMove() {
             break;
     }
 
-    // اگر خانه‌ای باقی نمانده، کاری نکن
     if (index === -1 || index === undefined) {
         return;
     }
